@@ -1,3 +1,8 @@
 <div class="calendar-container">
-	<p>{{ date }}</p>
+	<div class="en-date" *ngIf="chekIfEUFormat()">
+		<p>{{ date | date: 'shortDate' }}</p>
+	</div>
+	<div class="ua-date" *ngIf="!chekIfEUFormat()">
+		<p>{{ date | date: 'mediumDate' }}</p>
+	</div>
 </div>

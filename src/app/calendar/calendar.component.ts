@@ -5,8 +5,13 @@ import { Component, Input } from '@angular/core';
 	templateUrl: './calendar.component.html'
 })
 export class CalendarComponent {
-
-	@Input() date: string;
+	@Input() date: Date;
+	@Input() dateFormat: string;
 
 	constructor() {}
+
+	chekIfEUFormat(): boolean {
+		
+		return (this.dateFormat === 'en-US');
+	}
 }

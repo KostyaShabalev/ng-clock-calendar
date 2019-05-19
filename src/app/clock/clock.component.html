@@ -1,3 +1,8 @@
 <div class="clock-container">
-	<p>{{ time }}</p>
+	<div class="short-time" *ngIf="isShortTimeFormat">
+		<p>{{ date | date: 'shortTime' }}</p>
+	</div>
+	<div class="full-time" *ngIf="!isShortTimeFormat">
+		<p>{{ date | date: 'mediumTime' }}</p>
+	</div>
 </div>

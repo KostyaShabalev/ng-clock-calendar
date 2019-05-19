@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Observable, Subscription } from "rxjs";
 
 import { DateService } from "./services/date.service";
 import { DateOptionsModel } from './models/date-options.model';
@@ -6,30 +7,29 @@ import { TimeOptionsModel } from './models/time-options.model';
 
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.less']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.less']
 })
 export class AppComponent {
-	
-	public currentTime: string;
-	public currentDate: string;
+	public date: Date;
+	public isShortTimeFormat: boolean = true;
+	public dateFormat: string = 'en-US';
 
+	private dateObservable: Observable<number>;
+	private subscription: Subscription;
 	private isClockDisplayed: boolean;
-	private timerId: any; // What type should I specify?
-	private timeFormat: string = 'short';
-	private dateFormat: string = 'en-US';
 
 	constructor(private dateService: DateService) {
 		this.isClockDisplayed = true;
 
-		this.startApp();
+		this.runApp();
 	}
 
-	startApp(): void {
+	runApp(): void {
 
-		if (this.timerId) {
-			clearInterval(this.timerId);
+		if (this.subscription) {
+			this.subscription.unsubscribe();
 		}
 
 		if (this.isClockDisplayed) {
@@ -40,71 +40,52 @@ export class AppComponent {
 	}
 
 	initClock(): void {
-		let timeFormat: TimeOptionsModel = {
-			hour: '2-digit',
-			minute: '2-digit'
-		}
-		let mainInterval = 60000;
-		let intervalForTimeout = 60000 - 1000 * new Date().getSeconds();
+		let interval = 60000;
+		let delay = 60000 - 1000 * new Date().getSeconds();
 
-		if (this.timeFormat === 'full') {
-			timeFormat.second = '2-digit';
-			mainInterval = 1000;
-			intervalForTimeout = 0;
+		if (!this.isShortTimeFormat) {
+			interval = 1000;
+			delay = 0;
 		}
 
-			this.setTime(timeFormat);
+		this.date = this.dateService.getDate();
 
-			this.timerId = setTimeout(() => {
-
-				this.setTime(timeFormat);
-
-				this.timerId = setInterval(() => {
-					this.setTime(timeFormat);
-				}, mainInterval);
-
-			}, intervalForTimeout);
-	}
-
-	setTime(timeFormat): void {
-		let date = this.dateService.getDate();
-		this.currentTime = date.toLocaleTimeString('en-US', timeFormat);
+		this.subscription = this.subscribeToDate(delay, interval);
 	}
 
 	initDate(): void {
-		const dateOptions: DateOptionsModel = {
-			year: '2-digit',
-			month: '2-digit',
-			day: '2-digit'
-		};
+		const delay = 0;
+		const interval = 60000;
 
-		this.setDate(dateOptions);
+		this.date = this.dateService.getDate();
 
-		this.timerId = setInterval(() => {
-			this.setDate(dateOptions);
-		}, 60000);
+		this.subscription = this.subscribeToDate(delay, interval);
 	}
 
-	setDate(dateOptions): void {
-		let date: Date = this.dateService.getDate();
-		this.currentDate = date.toLocaleDateString(this.dateFormat, dateOptions);
+	subscribeToDate(delay, interval): Subscription {
+		this.dateObservable = this.dateService.runTimer(delay, interval);
+
+		return this.dateObservable
+			.subscribe(() => {
+				this.date = this.dateService.getDate();
+			});
 	}
 
 	onLeftClick(): void {
 		this.isClockDisplayed = !this.isClockDisplayed;
-		
-		this.startApp();
+
+		this.runApp();
 	}
 
 	onRightClick(event: Event): void {
 		event.preventDefault();
-		
+
 		if (this.isClockDisplayed) {
-			this.timeFormat = (this.timeFormat === 'short') ? 'full' : 'short';
+			this.isShortTimeFormat = !this.isShortTimeFormat;
 		} else {
 			this.dateFormat = (this.dateFormat === 'en-US') ? 'uk-UA' : 'en-US';
 		}
 
-		this.startApp();
+		this.runApp();
 	}
 }

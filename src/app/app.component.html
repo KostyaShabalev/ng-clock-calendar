@@ -1,12 +1,14 @@
 <div class="clock-calendar-container">
 	<app-clock
 		*ngIf="isClockDisplayed"
-		[time]="currentTime"
+		[date]="date"
+		[isShortTimeFormat]="isShortTimeFormat"
 		(click)="onLeftClick()"
 		(contextmenu)="onRightClick($event)"></app-clock>
 	<app-calendar
 		*ngIf="!isClockDisplayed"
-		[date]="currentDate"
+		[date]="date"
+		[dateFormat]="dateFormat"
 		(click)="onLeftClick()"
 		(contextmenu)="onRightClick($event)"></app-calendar>
 </div>
