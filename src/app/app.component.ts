@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 import { Observable, Subscription } from "rxjs";
 
 import { DateService } from "./services/date.service";
-import { DateOptionsModel } from './models/date-options.model';
-import { TimeOptionsModel } from './models/time-options.model';
-
+import { WeatherService } from './services/weather.service';
+import { CityWeatherModel } from "./models/city-weather.model";
 
 @Component({
 	selector: 'app-root',
@@ -15,21 +14,30 @@ export class AppComponent {
 	public date: Date;
 	public isShortTimeFormat: boolean = true;
 	public dateFormat: string = 'en-US';
+	public cityWeatherInfo: CityWeatherModel;
 
 	private dateObservable: Observable<number>;
-	private subscription: Subscription;
+	private dateSubscription: Subscription;
+	private weatherSubscription: Subscription;
 	private isClockDisplayed: boolean;
 
-	constructor(private dateService: DateService) {
+	constructor(
+		private dateService: DateService,
+		private weatherService: WeatherService) {
 		this.isClockDisplayed = true;
+
+		this.weatherSubscription = this.weatherService.getDniproWeather()
+			.subscribe(data => {
+				this.cityWeatherInfo = data;
+			});
 
 		this.runApp();
 	}
 
 	runApp(): void {
 
-		if (this.subscription) {
-			this.subscription.unsubscribe();
+		if (this.dateSubscription) {
+			this.dateSubscription.unsubscribe();
 		}
 
 		if (this.isClockDisplayed) {
@@ -50,7 +58,7 @@ export class AppComponent {
 
 		this.date = this.dateService.getDate();
 
-		this.subscription = this.subscribeToDate(delay, interval);
+		this.dateSubscription = this.subscribeToDate(delay, interval);
 	}
 
 	initDate(): void {
@@ -59,7 +67,7 @@ export class AppComponent {
 
 		this.date = this.dateService.getDate();
 
-		this.subscription = this.subscribeToDate(delay, interval);
+		this.dateSubscription = this.subscribeToDate(delay, interval);
 	}
 
 	subscribeToDate(delay, interval): Subscription {

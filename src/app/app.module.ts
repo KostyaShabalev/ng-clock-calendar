@@ -1,25 +1,30 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from "@angular/common/http";
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClockComponent } from './clock/clock.component';
 import { CalendarComponent } from './calendar/calendar.component';
-import { DeprecatedDatePipe } from '@angular/common';
 import { DateService } from './services/date.service';
+import { WeatherService } from './services/weather.service';
+import { WeatherComponent } from './weather/weather.component';
 
 @NgModule({
   declarations: [
 		AppComponent,
 		ClockComponent,
-		CalendarComponent
+		CalendarComponent,
+		WeatherComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+		AppRoutingModule,
+		HttpClientModule
   ],
   providers: [
-		DateService
+		DateService,
+		WeatherService
 	],
   bootstrap: [AppComponent]
 })

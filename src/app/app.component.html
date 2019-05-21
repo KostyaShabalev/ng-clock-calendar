@@ -12,3 +12,7 @@
 		(click)="onLeftClick()"
 		(contextmenu)="onRightClick($event)"></app-calendar>
 </div>
+<div class="weather-container">
+	<app-weather
+		[cityWeatherInfo]="cityWeatherInfo"></app-weather>
+</div>
