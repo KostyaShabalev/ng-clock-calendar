@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
-import { Observable, Subscription } from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { Observable, Subscription, timer } from "rxjs";
 
-import { DateService } from "./services/date.service";
 import { WeatherService } from './services/weather.service';
 import { CityWeatherModel } from "./models/city-weather.model";
 
@@ -10,31 +9,26 @@ import { CityWeatherModel } from "./models/city-weather.model";
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.less']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 	public date: Date;
 	public isShortTimeFormat: boolean = true;
 	public dateFormat: string = 'en-US';
-	public cityWeatherInfo: CityWeatherModel;
 
 	private dateObservable: Observable<number>;
 	private dateSubscription: Subscription;
 	private weatherSubscription: Subscription;
 	private isClockDisplayed: boolean;
+	private cityWeatherInfo: CityWeatherModel;
 
-	constructor(
-		private dateService: DateService,
-		private weatherService: WeatherService) {
+	constructor(private weatherService: WeatherService) {}
+
+	ngOnInit() {
 		this.isClockDisplayed = true;
-
-		this.weatherSubscription = this.weatherService.getDniproWeather()
-			.subscribe(data => {
-				this.cityWeatherInfo = data;
-			});
 
 		this.runApp();
 	}
 
-	runApp(): void {
+	private runApp(): void {
 
 		if (this.dateSubscription) {
 			this.dateSubscription.unsubscribe();
@@ -45,9 +39,15 @@ export class AppComponent {
 		} else {
 			this.initDate();
 		}
+
+		this.weatherSubscription = this.weatherService.getDniproWeather()
+			.subscribe(weatherData => {
+
+				this.cityWeatherInfo = weatherData;
+			});
 	}
 
-	initClock(): void {
+	private initClock(): void {
 		let interval = 60000;
 		let delay = 60000 - 1000 * new Date().getSeconds();
 
@@ -56,36 +56,47 @@ export class AppComponent {
 			delay = 0;
 		}
 
-		this.date = this.dateService.getDate();
+		this.date = this.getDate();
 
 		this.dateSubscription = this.subscribeToDate(delay, interval);
 	}
 
-	initDate(): void {
+	private initDate(): void {
 		const delay = 0;
 		const interval = 60000;
 
-		this.date = this.dateService.getDate();
+		this.date = this.getDate();
 
 		this.dateSubscription = this.subscribeToDate(delay, interval);
 	}
 
-	subscribeToDate(delay, interval): Subscription {
-		this.dateObservable = this.dateService.runTimer(delay, interval);
+	private getDate(): Date {
+
+		return new Date();
+	}
+
+	private runTimer(delay, interval): Observable<number> {
+		const newTimer = timer(delay, interval);
+
+		return newTimer;
+	}
+
+	private subscribeToDate(delay, interval): Subscription {
+		this.dateObservable = this.runTimer(delay, interval);
 
 		return this.dateObservable
 			.subscribe(() => {
-				this.date = this.dateService.getDate();
+				this.date = this.getDate();
 			});
 	}
 
-	onLeftClick(): void {
+	public onLeftClick(): void {
 		this.isClockDisplayed = !this.isClockDisplayed;
 
 		this.runApp();
 	}
 
-	onRightClick(event: Event): void {
+	public onRightClick(event: Event): void {
 		event.preventDefault();
 
 		if (this.isClockDisplayed) {

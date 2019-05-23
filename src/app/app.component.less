@@ -1,13 +1,16 @@
+@import '../less/vars';
+@import '../less/mixines';
+
 .clock-calendar-container {
 	font-family: 'Orbitron', sans-serif;
 	position: absolute;
 	top: 50%;
-	left: 50%;
+	left: 11%;
 	transform: translateX(-50%) translateY(-50%);
 	border: 2px solid black;
 	width: 20%;
 	text-align: center;
-	background: rgb(23, 148, 85);
+	background: @dark-color;
 	color: #fff;
 	font-weight: bold;
 	letter-spacing: 2px;
@@ -15,18 +18,69 @@
 
 .clock-calendar-container:hover {
 	cursor: pointer;
-	background: rgb(71, 175, 123);
+	background: @light-color;
 	color: #000;
-	border: 2px solid rgb(156, 153, 153);
+	border: 2px solid @light-border-color;
 }
 
 .weather-container {
 	width: 20%;
 	padding-left: 10px;
-	font-family: sans-serif;
+	font-family: @font-family-main;
 	border: 2px solid black;
-	background: rgb(23, 148, 85);
+	background: @dark-color;
 	color: #fff;
 	font-weight: bold;
 	letter-spacing: 2px;
+}
+
+.less-practicing {
+	width: 50%;
+	font-family: @font-family-main;
+	position: absolute;
+	top: 10%;
+	bottom: 10%;
+	right: 10%;
+
+	h1 {
+		color: @title-color;
+	}
+
+	.text-container-big {
+		.text-container;
+		font-size: 2em;
+		padding: 10px;
+	}
+	
+	.text-container-small {
+		.text-container;
+		font-size: 0.8em;
+		padding: 6px;
+	}
+
+	.list {
+		.list-main;
+
+		li {
+			margin-bottom: 6px;
+		}
+		
+		a {
+			.link;
+		}
+	}
+
+	.banner {
+		font-size: 32px;
+		background: green;
+		text-align: center;
+
+		@media screen {
+			@media (max-width: 768px) {
+				font-size: 18px;
+				background: blue;
+			}
+		}
+	}
+
 }

@@ -8,5 +8,4 @@ import { CityWeatherModel } from "../models/city-weather.model";
 })
 export class WeatherComponent {
 	@Input() cityWeatherInfo: CityWeatherModel;
-	
 }

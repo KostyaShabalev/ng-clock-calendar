@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClockComponent } from './clock/clock.component';
 import { CalendarComponent } from './calendar/calendar.component';
-import { DateService } from './services/date.service';
 import { WeatherService } from './services/weather.service';
 import { WeatherComponent } from './weather/weather.component';
 
@@ -23,7 +22,6 @@ import { WeatherComponent } from './weather/weather.component';
 		HttpClientModule
   ],
   providers: [
-		DateService,
 		WeatherService
 	],
   bootstrap: [AppComponent]
